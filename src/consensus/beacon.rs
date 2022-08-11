@@ -103,6 +103,7 @@ impl BeaconConsensus {
         terminal_total_difficulty: Option<U256>,
         terminal_block_hash: Option<H256>,
         terminal_block_number: Option<BlockNumber>,
+        since: BlockNumber,
     ) -> Self {
         let (chain_tip_sender, receiver) = tokio::sync::watch::channel(ExternalForkChoice {
             head_block: H256::zero(),
@@ -111,7 +112,7 @@ impl BeaconConsensus {
         Self {
             base: ConsensusEngineBase::new(chain_id, eip1559_block, None),
             block_reward,
-            since: terminal_block_number.unwrap_or_default() + 1,
+            since,
             receiver,
             server_task: db.map(move |db| {
                 TaskGuard(tokio::spawn(async move {

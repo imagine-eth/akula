@@ -354,6 +354,7 @@ pub fn engine_factory(
             terminal_total_difficulty,
             terminal_block_hash,
             terminal_block_number,
+            since,
             block_reward,
         } => Box::new(BeaconConsensus::new(
             db,
@@ -367,6 +368,7 @@ pub fn engine_factory(
             terminal_total_difficulty,
             terminal_block_hash,
             terminal_block_number,
+            since,
         )),
     })
 }

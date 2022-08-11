@@ -203,6 +203,7 @@ pub enum SealVerificationParams {
             with = "::serde_with::rust::unwrap_or_skip"
         )]
         terminal_block_number: Option<BlockNumber>,
+        since: BlockNumber,
         #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
         block_reward: BTreeMap<BlockNumber, U256>,
     },
