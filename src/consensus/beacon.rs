@@ -87,7 +87,7 @@ impl EngineApiServer for EngineApiServerImpl {
 pub struct BeaconConsensus {
     base: ConsensusEngineBase,
     block_reward: BlockRewardSchedule,
-    since: BlockNumber,
+    since: Option<BlockNumber>,
     receiver: watch::Receiver<ExternalForkChoice>,
     server_task: Option<TaskGuard<!>>,
 }
@@ -103,6 +103,7 @@ impl BeaconConsensus {
         terminal_total_difficulty: Option<U256>,
         terminal_block_hash: Option<H256>,
         terminal_block_number: Option<BlockNumber>,
+        since: Option<BlockNumber>,
     ) -> Self {
         let (chain_tip_sender, receiver) = tokio::sync::watch::channel(ExternalForkChoice {
             head_block: H256::zero(),
@@ -111,7 +112,7 @@ impl BeaconConsensus {
         Self {
             base: ConsensusEngineBase::new(chain_id, eip1559_block, None),
             block_reward,
-            since: terminal_block_number.unwrap_or_default() + 1,
+            since,
             receiver,
             server_task: db.map(move |db| {
                 TaskGuard(tokio::spawn(async move {
@@ -191,7 +192,11 @@ impl Consensus for BeaconConsensus {
         self.base
             .validate_block_header(header, parent, with_future_timestamp_check)?;
 
-        if header.number >= self.since {
+        if self
+            .since
+            .map(|since| header.number >= since)
+            .unwrap_or(true)
+        {
             if header.ommers_hash != EMPTY_LIST_HASH {
                 return Err(ValidationError::TooManyOmmers.into());
             }
