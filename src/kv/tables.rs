@@ -102,6 +102,7 @@ macro_rules! decl_table {
 #[derive(Clone, Debug, Default, Deserialize)]
 pub struct TableInfo {
     pub dup_sort: bool,
+    pub dup_fixed: bool,
 }
 
 /// Table encoding impls
@@ -840,6 +841,7 @@ macro_rules! table_entry {
             <$t>::const_db_name(),
             TableInfo {
                 dup_sort: impls::impls!($t: DupSort),
+                dup_fixed: impls::impls!($t: DupFixed),
             },
         )
     };

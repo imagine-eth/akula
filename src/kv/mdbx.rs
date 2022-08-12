@@ -79,15 +79,18 @@ impl<E: EnvironmentKind> MdbxEnvironment<E> {
         let s = Self::open(b, path, chart, false)?;
 
         let tx = s.inner.begin_rw_txn()?;
-        for (table, info) in chart {
-            tx.create_db(
-                Some(table),
-                if info.dup_sort {
-                    DatabaseFlags::DUP_SORT
-                } else {
-                    DatabaseFlags::default()
-                },
-            )?;
+        for (name, info) in chart {
+            let mut flags = DatabaseFlags::default();
+
+            if info.dup_sort {
+                flags |= DatabaseFlags::DUP_SORT;
+            }
+
+            if info.dup_fixed {
+                flags |= DatabaseFlags::DUP_FIXED;
+            }
+
+            tx.create_db(Some(name), flags)?;
         }
         tx.commit()?;
 

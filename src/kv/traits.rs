@@ -31,6 +31,8 @@ pub trait DupSort: Table {
     type SeekBothKey: TableObject;
 }
 
+pub trait DupFixed: DupSort {}
+
 #[derive(Copy, Clone, Debug)]
 pub struct TryGenIter<'a, G, E>
 where
