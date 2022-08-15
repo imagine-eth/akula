@@ -40,6 +40,7 @@ pub mod p2p;
 pub mod res;
 pub mod rpc;
 pub mod sentry;
+pub mod snapshot;
 pub mod stagedsync;
 pub mod stages;
 mod state;
